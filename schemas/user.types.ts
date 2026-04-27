@@ -5,9 +5,9 @@ export type Usuario = {
     password:string
     email:string
     phone: string
-    fecha_nacimiento: Date
+    fecha_nacimiento: string
     gender: string
-    relation_pacien: String
+    relation_pacien: string
     address:string
     token_not: string |null
 }

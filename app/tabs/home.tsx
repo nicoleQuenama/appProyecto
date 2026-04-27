@@ -5,81 +5,55 @@ import {
 import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useAuth } from '../../context/AuthContext'
-import { getProfile } from '../../services/usuarioService'
-import { getRecentAlerts, markAlertAsRead } from '../../services/alertService'
-import { Profile } from '../../schemas/profile.types'
-import { Alert } from '../../schemas/alert.types'
+import { getPacienteUsuario } from '../../services/pacienteService'
+import { getReportes } from '../../services/reporteService'
+import { getProximasCitas } from '../../services/citaService'
+
+// Importamos tus nuevos esquemas
+import { Infante } from '../../schemas/pacient_inf.types'
+import { Reportes } from '../../schemas/reportes.types'
+import { Cita } from '../../schemas/citas.types'
 import { Colors } from '../../constants/colors'
 
-const ALERT_CONFIG: Record<
-  Alert['alert_type'],
-  { label: string; color: string; bgColor: string }> = {
-  low_battery: {
-    label: 'Batería baja',
-    color: Colors.warning,
-    bgColor: Colors.warningLight,
-  },
-  abnormal_pressure: {
-    label: 'Presión anormal',
-    color: Colors.danger,
-    bgColor: Colors.dangerLight,
-  },
-  specialist_message: {
-    label: 'Mensaje del especialista',
-    color: Colors.secondary,
-    bgColor: Colors.secondaryLight,
-  },
-  inactivity: {
-    label: 'Inactividad detectada',
-    color: Colors.textSecondary,
-    bgColor: Colors.primaryLight,
-  },
-}
-
 export default function HomeScreen() {
-  const { user } = useAuth()
+  const { user } = useAuth() // Sacamos el usuario logueado de tu contexto
   const router = useRouter()
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [alerts, setAlerts] = useState<Alert[]>([])
+  
+  // Estados para nuestra nueva estructura
   const [loading, setLoading] = useState(true)
+  const [paciente, setPaciente] = useState<Infante | null>(null)
+  const [reportes, setReportes] = useState<Reportes[]>([])
+  const [citas, setCitas] = useState<Cita[]>([])
 
   useEffect(() => {
-    Promise.all([getProfile(), getRecentAlerts()])
-      .then(([prof, alts]) => {
-        setProfile(prof)
-        setAlerts(alts)
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+    async function cargarDatos() {
+      if (!user) return; // Si no hay usuario, no hacemos nada
 
-  async function handleAlertPress(alertId: string) {
-    await markAlertAsRead(alertId)
-    setAlerts((prev) =>
-      prev.map((a) => (a.id === alertId ? { ...a, is_read: true } : a))
-    )
-  }
+      try {
+        setLoading(true)
+        
+        // 1. Buscamos al infante vinculado a este usuario
+        const infante = await getPacienteUsuario(user.id)
+        setPaciente(infante)
 
-  function formatAlertDate(iso: string) {
-    const date = new Date(iso)
-    const now = new Date()
-    const isToday = date.toDateString() === now.toDateString()
-    if (isToday) {
-      return `Hoy, ${date.toLocaleTimeString('es-BO', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })}`
+        // 2. Si el infante existe, traemos sus citas y reportes al mismo tiempo
+        if (infante) {
+          const [reps, appts] = await Promise.all([
+            getReportes(infante.id),
+            getProximasCitas(infante.id)
+          ])
+          setReportes(reps)
+          setCitas(appts)
+        }
+      } catch (error) {
+        console.error("Error cargando el Home:", error)
+      } finally {
+        setLoading(false)
+      }
     }
-    return date.toLocaleDateString('es-BO', {
-      day: 'numeric',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
 
-  const firstName = profile?.full_name.split(' ')[0] ?? 'Tutor'
-  const unreadCount = alerts.filter((a) => !a.is_read).length
+    cargarDatos()
+  }, [user])
 
   if (loading) {
     return (
@@ -96,324 +70,112 @@ export default function HomeScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
+      {/* Cabecera */}
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Bienvenido,</Text>
-          <Text style={styles.name}>{firstName}</Text>
+          <Text style={styles.name}>{paciente ? paciente.nomtuto : 'Tutor'}</Text>
         </View>
         <TouchableOpacity
           style={styles.avatarBtn}
-          onPress={() => router.push('/(tabs)/profile')}
+          onPress={() => router.push('/tabs/profile')}
           activeOpacity={0.8}
         >
           <Text style={styles.avatarText}>
-            {firstName.charAt(0).toUpperCase()}
+            {paciente ? paciente.nomtuto.charAt(0).toUpperCase() : 'T'}
           </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.summaryCard}>
-        <View style={styles.summaryTop}>
-          <View>
-            <Text style={styles.summaryTitle}>Resumen del día</Text>
+      {!paciente ? (
+        /* Pantalla si aún no vincula a un niño */
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyTitle}>¡Hola!</Text>
+          <Text style={styles.emptySubtitle}>Aún no has registrado a tu paciente infantil. Por favor, vincula a un niño para ver su progreso.</Text>
+        </View>
+      ) : (
+        <>
+          {/* Resumen del Infante */}
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryTitle}>Paciente: {paciente.nombre}</Text>
             <Text style={styles.summarySubtitle}>
-              {new Date().toLocaleDateString('es-BO', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-              })}
+              Edad: {paciente.edad} años | Peso: {paciente.peso} kg
             </Text>
-          </View>
-          {unreadCount > 0 && (
-            <View style={styles.unreadBadge}>
-              <Text style={styles.unreadBadgeText}>
-                {unreadCount} {unreadCount === 1 ? 'alerta' : 'alertas'}
+            {paciente.problemas_salud && (
+              <Text style={styles.summaryAlert}>
+                Atención: {paciente.problemas_salud}
               </Text>
-            </View>
-          )}
-        </View>
-        <View style={styles.summaryDivider} />
-        <Text style={styles.summaryDescription}>
-          {unreadCount > 0
-            ? `Tienes ${unreadCount} alerta${unreadCount > 1 ? 's' : ''} sin revisar de tu paciente.`
-            : 'Todo está en orden. No hay alertas pendientes por revisar.'}
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Alertas recientes</Text>
-          {unreadCount > 0 && (
-            <View style={styles.countBadge}>
-              <Text style={styles.countBadgeText}>{unreadCount}</Text>
-            </View>
-          )}
-        </View>
-
-        {alerts.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIconWrapper}>
-              <Text style={styles.emptyIconText}>✓</Text>
-            </View>
-            <Text style={styles.emptyTitle}>Sin alertas pendientes</Text>
-            <Text style={styles.emptySubtitle}>
-              Todo marcha bien con tu paciente
-            </Text>
+            )}
           </View>
-        ) : (
-          alerts.map((alert) => {
-            const config = ALERT_CONFIG[alert.alert_type]
-            return (
-              <TouchableOpacity
-                key={alert.id}
-                style={[
-                  styles.alertCard,
-                  !alert.is_read && styles.alertCardUnread,
-                ]}
-                onPress={() => handleAlertPress(alert.id)}
-                activeOpacity={0.75}
-              >
-                <View style={[styles.alertTag, { backgroundColor: config.bgColor }]}>
-                  <Text style={[styles.alertTagText, { color: config.color }]}>
-                    {config.label}
+
+          {/* Sección: Próximas Citas */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Próximas Citas</Text>
+            {citas.length === 0 ? (
+              <Text style={styles.emptyText}>No hay citas programadas.</Text>
+            ) : (
+              citas.map((cita) => (
+                <View key={cita.id} style={styles.itemCard}>
+                  <Text style={styles.itemTitle}>Especialista: {cita.especialista}</Text>
+                  <Text style={styles.itemDetail}>
+                    Fecha: {new Date(cita.fecha_hor).toLocaleDateString()}
+                  </Text>
+                  <View style={styles.statusBadge}>
+                    <Text style={styles.statusText}>{cita.estado}</Text>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
+
+          {/* Sección: Reportes Recientes */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Reportes del Doctor</Text>
+            {reportes.length === 0 ? (
+              <Text style={styles.emptyText}>No hay reportes recientes.</Text>
+            ) : (
+              reportes.map((reporte) => (
+                <View key={reporte.id} style={[styles.itemCard, styles.reportBorder]}>
+                  <Text style={styles.itemTitle}>Progreso: {reporte.indicador_progreso}</Text>
+                  <Text style={styles.itemDetail}>{reporte.notas_doctor}</Text>
+                  <Text style={styles.dateText}>
+                    Sesión: {new Date(reporte.fecha_Sesion).toLocaleDateString()}
                   </Text>
                 </View>
-                <Text style={[
-                  styles.alertMessage,
-                  !alert.is_read && styles.alertMessageUnread,
-                ]}>
-                  {alert.message}
-                </Text>
-                <View style={styles.alertFooter}>
-                  <Text style={styles.alertDate}>
-                    {formatAlertDate(alert.created_at)}
-                  </Text>
-                  {!alert.is_read && <View style={styles.unreadDot} />}
-                </View>
-              </TouchableOpacity>
-            )
-          })
-        )}
-      </View>
+              ))
+            )}
+          </View>
+        </>
+      )}
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  container: {
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 40,
-  },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.background,
-    gap: 12,
-  },
-  loadingText: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  greeting: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-  },
-  name: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: Colors.primaryDark,
-    letterSpacing: -0.5,
-  },
-  avatarBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: Colors.primary,
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
-  },
-  avatarText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: '800',
-  },
-  summaryCard: {
-    backgroundColor: Colors.primaryDark,
-    borderRadius: 24,
-    padding: 22,
-    marginBottom: 28,
-  },
-  summaryTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  summaryTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  summarySubtitle: {
-    fontSize: 12,
-    color: Colors.primaryBorder,
-    marginTop: 3,
-    textTransform: 'capitalize',
-  },
-  unreadBadge: {
-    backgroundColor: Colors.primaryMid,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  unreadBadgeText: {
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  summaryDivider: {
-    height: 1,
-    backgroundColor: Colors.primaryMid,
-    opacity: 0.3,
-    marginVertical: 14,
-  },
-  summaryDescription: {
-    fontSize: 14,
-    color: Colors.primaryBorder,
-    lineHeight: 20,
-  },
-  section: {
-    gap: 10,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 6,
-  },
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: Colors.primaryDark,
-  },
-  countBadge: {
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    width: 22,
-    height: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  countBadgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  emptyCard: {
-    backgroundColor: Colors.cardBg,
-    borderRadius: 20,
-    padding: 32,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  emptyIconWrapper: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: Colors.primaryBorder,
-  },
-  emptyIconText: {
-    fontSize: 22,
-    color: Colors.primary,
-    fontWeight: '700',
-  },
-  emptyTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.primaryDark,
-  },
-  emptySubtitle: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    marginTop: 4,
-    textAlign: 'center',
-  },
-  alertCard: {
-    backgroundColor: Colors.cardBg,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    shadowColor: Colors.primary,
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-    gap: 8,
-  },
-  alertCardUnread: {
-    borderLeftWidth: 3,
-    borderLeftColor: Colors.primary,
-    borderRadius: 0,
-    borderTopRightRadius: 16,
-    borderBottomRightRadius: 16,
-  },
-  alertTag: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  alertTagText: {
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  alertMessage: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    lineHeight: 20,
-  },
-  alertMessageUnread: {
-    color: Colors.textPrimary,
-    fontWeight: '600',
-  },
-  alertFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  alertDate: {
-    fontSize: 12,
-    color: Colors.textHint,
-  },
-  unreadDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.primary,
-  },
+  scroll: { flex: 1, backgroundColor: Colors.background },
+  container: { paddingHorizontal: 24, paddingTop: 60, paddingBottom: 40 },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.background, gap: 12 },
+  loadingText: { fontSize: 14, color: Colors.textSecondary },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
+  greeting: { fontSize: 14, color: Colors.textSecondary },
+  name: { fontSize: 26, fontWeight: '800', color: Colors.primaryDark, letterSpacing: -0.5 },
+  avatarBtn: { width: 48, height: 48, borderRadius: 16, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { color: '#fff', fontSize: 20, fontWeight: '800' },
+  emptyCard: { backgroundColor: Colors.cardBg, borderRadius: 20, padding: 32, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: Colors.primaryDark, marginBottom: 8 },
+  emptySubtitle: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20 },
+  summaryCard: { backgroundColor: Colors.primaryDark, borderRadius: 24, padding: 22, marginBottom: 28 },
+  summaryTitle: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  summarySubtitle: { fontSize: 13, color: Colors.primaryBorder, marginTop: 4 },
+  summaryAlert: { marginTop: 10, color: Colors.warning, fontWeight: '600', fontSize: 13 },
+  section: { marginBottom: 24 },
+  sectionTitle: { fontSize: 17, fontWeight: '700', color: Colors.primaryDark, marginBottom: 12 },
+  itemCard: { backgroundColor: Colors.cardBg, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  reportBorder: { borderLeftWidth: 4, borderLeftColor: Colors.secondary },
+  itemTitle: { fontSize: 15, fontWeight: '700', color: Colors.primaryDark },
+  itemDetail: { fontSize: 14, color: Colors.textSecondary, marginTop: 4 },
+  dateText: { fontSize: 12, color: Colors.textHint, marginTop: 8 },
+  statusBadge: { alignSelf: 'flex-start', backgroundColor: Colors.primaryLight, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, marginTop: 8 },
+  statusText: { fontSize: 11, color: Colors.primary, fontWeight: '700', textTransform: 'uppercase' },
+  emptyText: { color: Colors.textHint, fontStyle: 'italic', fontSize: 14 }
 })

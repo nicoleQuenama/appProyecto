@@ -1,5 +1,6 @@
 export type Infante = {
     id: string
+    usuario_id: string
     codigo_vinculacion: string | null
     nombre: string
     edad: number

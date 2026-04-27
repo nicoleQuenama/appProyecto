@@ -1,7 +1,7 @@
 import {supabase} from '../lib/supabase'
 import {Infante} from '../schemas/pacient_inf.types'
 
-export async function getPacienteUsuario(usuarioId: string): Promise<Infante>{
+export async function getPacienteUsuario(usuarioId: string): Promise<Infante | null>{
     const {data, error} = await supabase
     .from('paciente_inf')
     .select('*')

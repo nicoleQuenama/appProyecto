@@ -3,8 +3,8 @@ import { getUsuario} from '../services/usuarioService'
 import { Usuario } from '../schemas/user.types'
 
 //carga el perfil
-export function useProfile() {
-  const [profile, setProfile] = useState<Usuario | null>(null)
+export function useUsuario() {
+  const [usuario, setProfile] = useState<Usuario | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -15,5 +15,5 @@ export function useProfile() {
       .finally(() => setLoading(false))
   }, [])
 
-  return { profile, loading, error }
+  return { usuario, loading, error }
 }
