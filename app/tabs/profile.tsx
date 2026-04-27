@@ -2,7 +2,7 @@ import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, ActivityIndicator,
 } from 'react-native'
-import { useProfile } from '../../hooks/useProfile'
+import { useProfile } from '../../hooks/useUsuario'
 import { useAuthActions } from '../../hooks/useAuth'
 import { Colors } from '../../constants/colors'
 

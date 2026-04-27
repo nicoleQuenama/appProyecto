@@ -1,5 +1,5 @@
 import { validarRegistro } from './validation';
-import { RegisterForm } from './auth.types';
+import { RegisterForm } from '../auth.types';
 
 describe('Validación de Datos', () => {
 
@@ -9,7 +9,7 @@ describe('Validación de Datos', () => {
     email: 'alex@mail.com',
     password: 'password123',
     phone: '123456789',
-    birthDate: '1990-01-01'
+   // birthDate: '1990-01-01'
   };
 
   it('si los datos son correctos pasamos la validacion', () => {

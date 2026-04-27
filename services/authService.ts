@@ -4,12 +4,17 @@ import { RegisterForm, LoginForm } from '../schemas/auth.types'
 // Creación de usuario 
 export async function registrarUsuario(form: RegisterForm) {
     await supabase.auth.signOut()
+
     const payload = {
-    full_name: form.fullName,
+    nombre_completo: form.fullName,
     username: form.username,
-    phone: form.phone ?? null,
-    birth_date: form.birthDate ?? null,
-    gender: form.gender ?? null,
+    email: form.email,
+    password: form.password,
+    telefono: form.phone,
+    nacimiento: form.fecha_nacimiento,
+    genero: form.gender,
+    relacion_pacien: form.relation_pacien,
+    direccion: form.address,
   }
   
   console.log('PAYLOAD COMPLETO:', JSON.stringify(payload))
@@ -25,7 +30,7 @@ export async function registrarUsuario(form: RegisterForm) {
   return data
 }
 
-// Logueo — verifica si es email o username
+// Logueo — verificamos el email y el username
 export async function loginUser(form: LoginForm) {
   const isEmail = form.emailOrUsername.includes('@')
   if (isEmail) {
@@ -44,14 +49,14 @@ async function loginWithEmail(email: string, password: string) {
 
 // Login con username
 async function loginWithUsername(username: string, password: string) {
-  const { data: profile, error } = await supabase
-    .from('profiles')
+  const { data: usuario, error } = await supabase
+    .from('usuarios')
     .select('email')
     .eq('username', username)
     .single()
 
-  if (error || !profile) throw new Error('Usuario no encontrado')
-  return loginWithEmail(profile.email, password)
+  if (error || !usuario) throw new Error('Usuario no encontrado')
+  return loginWithEmail(usuario.email, password)
 }
 
 // Cerrar sesión

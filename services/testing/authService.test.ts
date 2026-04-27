@@ -1,4 +1,4 @@
-import { traducirError } from "./authService";
+import { traducirError } from "../authService";
 
 // prueba unitaria para la función traducirError
 

@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabase'
-import { Profile } from '../schemas/profile.types'
+import { Usuario } from '../schemas/user.types'
 
-export async function getProfile(retries = 3): Promise<Profile> {
+export async function getUsuario(retries = 3): Promise<Usuario> {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
@@ -11,17 +11,16 @@ export async function getProfile(retries = 3): Promise<Profile> {
 
   for (let i = 0; i < retries; i++) {
     const { data, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, username, email, phone, birth_date, gender, created_at')
+      .from('usuarios')
+      .select('id, full_name, username, email, phone, password, gender,relation_pacien, fecha_nacimiento, address')
       .eq('id', user.id) 
       .maybeSingle() 
 
     if (error) throw error
-
-    if (data) return data
-
+    //if (data) return data
+ 
     if (i < retries - 1) {
-      console.log(`Perfil no encontrado, reintento ${i + 1} de ${retries}...`)
+      console.log(`Usuario no encontrado, reintento ${i + 1} de ${retries}...`)
       await new Promise(resolve => setTimeout(resolve, 500))
     }
   }

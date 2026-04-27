@@ -1,11 +1,16 @@
+import { DrawerPosition } from "react-native";
+
 export type RegisterForm = {
+    id: string;
     fullName: string
     username: string
     email:string
     password:string
     phone:string //opcional
-    birthDate: string
     gender?: 'masculino'| 'femenino' | 'otro'
+    relation_pacien: String
+    fecha_nacimiento: Date
+    address: string
 }
 
 export type LoginForm={

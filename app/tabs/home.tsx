@@ -5,7 +5,7 @@ import {
 import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useAuth } from '../../context/AuthContext'
-import { getProfile } from '../../services/profileService'
+import { getProfile } from '../../services/usuarioService'
 import { getRecentAlerts, markAlertAsRead } from '../../services/alertService'
 import { Profile } from '../../schemas/profile.types'
 import { Alert } from '../../schemas/alert.types'

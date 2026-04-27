@@ -1,5 +1,5 @@
-import { getRecentAlerts } from './alertService';
-import { supabase } from '../lib/supabase';
+import { getRecentAlerts } from '.././alertService';
+import { supabase } from '../../lib/supabase';
 
 jest.mock('../lib/supabase', () => ({
   supabase: {
