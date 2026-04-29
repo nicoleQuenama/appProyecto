@@ -4,12 +4,17 @@ import { RegisterForm } from '../auth.types';
 describe('Validación de Datos', () => {
 
   const usuarioValido: RegisterForm = {
+    id: '1',
     fullName: 'Alex Perez',
     username: 'alexp',
     email: 'alex@mail.com',
     password: 'password123',
     phone: '123456789',
-   // birthDate: '1990-01-01'
+    gender: 'masculino',
+    relation_pacien:'tutor legal',
+    fecha_nacimiento: new Date('1980-05-04'),
+    address: 'Calle Falsa 123',
+    token_not: null
   };
 
   it('si los datos son correctos pasamos la validacion', () => {

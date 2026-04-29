@@ -4,11 +4,12 @@ import { RegisterForm, LoginForm } from '../schemas/auth.types'
 // Creación de usuario 
 export async function registrarUsuario(form: RegisterForm) {
     await supabase.auth.signOut()
+    const emailLimpio = form.email.trim().toLowerCase() // quita espacios
 
     const payload = {
     nombre_completo: form.fullName,
     username: form.username,
-    email: form.email,
+    email: emailLimpio,
     password: form.password,
     telefono: form.phone,
     nacimiento: form.fecha_nacimiento,
@@ -20,7 +21,7 @@ export async function registrarUsuario(form: RegisterForm) {
   console.log('PAYLOAD COMPLETO:', JSON.stringify(payload))
 
   const { data, error } = await supabase.auth.signUp({
-    email: form.email,
+    email: emailLimpio,
     password: form.password,
     options: { data: payload },
   })
@@ -70,6 +71,7 @@ function traducirError(message: string): string {
   if (message.includes('User already registered')) return 'Este correo ya está registrado'
   if (message.includes('Usuario no encontrado')) return 'Nombre de usuario no encontrado'
   if (message.includes('Password should be')) return 'La contraseña debe tener al menos 6 caracteres'
+  if (message.includes('rate limit')) return 'Demasiados intentos. Por favor, espera un momento y vuelve a intentar.'
   return 'Ocurrió un error, intenta de nuevo'
 }
 

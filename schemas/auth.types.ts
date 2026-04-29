@@ -8,9 +8,10 @@ export type RegisterForm = {
     password:string
     phone:string //opcional
     gender?: 'masculino'| 'femenino' | 'otro'
-    relation_pacien: String
+    relation_pacien: string
     fecha_nacimiento: Date
     address: string
+    token_not: string | null
 }
 
 export type LoginForm={

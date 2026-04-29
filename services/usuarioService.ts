@@ -12,7 +12,7 @@ export async function getUsuario(retries = 3): Promise<Usuario> {
   for (let i = 0; i < retries; i++) {
     const { data, error } = await supabase
       .from('usuarios')
-      .select('id, full_name, username, email, phone, password, gender,relation_pacien, fecha_nacimiento, address')
+      .select('id, fullname, username, email, phone, gender, relation_pacien, fecha_nacimiento, address')
       .eq('id', user.id) 
       .maybeSingle() 
 
