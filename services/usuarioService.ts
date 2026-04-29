@@ -12,12 +12,12 @@ export async function getUsuario(retries = 3): Promise<Usuario> {
   for (let i = 0; i < retries; i++) {
     const { data, error } = await supabase
       .from('usuarios')
-      .select('id, fullname, username, email, phone, gender, relation_pacien, fecha_nacimiento, address')
+      .select('id, fullname, username, email, phone, gender, relation_pacien, fecha_nacimiento, address, token_not')
       .eq('id', user.id) 
       .maybeSingle() 
 
     if (error) throw error
-    //if (data) return data
+    if (data) return data
  
     if (i < retries - 1) {
       console.log(`Usuario no encontrado, reintento ${i + 1} de ${retries}...`)

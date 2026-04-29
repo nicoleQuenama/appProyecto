@@ -1,47 +1,52 @@
-import {supabase} from '../../lib/supabase';
-import {getUsuario} from '../../services/usuarioService';
+import { getUsuario } from '../../services/usuarioService';
+import { supabase } from '../../lib/supabase';
 
-const mockMaybeSingle= jest.fn();
-const mockEq= jest.fn().mockReturnValue({maybeSingle:mockMaybeSingle});
-const mockSelect = jest.fn().mockReturnValue({eq: mockEq});
-//simulamos
+const mockQueryBuilder = {
+  select: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis(),
+  maybeSingle: jest.fn()
+};
+
+// simulamos
 jest.mock('../../lib/supabase', () => ({
-    supabase: {
-        auth: {getUser:jest.fn()},
-        from: jest.fn().mockReturnThis(),
-    }
+  supabase: {
+    auth: { getUser: jest.fn() },
+    from: jest.fn(() => mockQueryBuilder)
+  }
 }));
 
 describe('usuarioService', () => {
-    beforeEach(()=>{
-        jest.clearAllMocks();
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('solicita columnas correctas sin pedir contrasena', async () => {
+    // Simulamos la sesión del usuario
+    (supabase.auth.getUser as jest.Mock).mockResolvedValue({
+      data: { user: { id: 'test-uuid-123' } }
     });
 
-    it ('solicita columnas correctas sin pedir contrasena', async() => {
-        //simulacion de sesion activa
-        (supabase.auth.getUser as jest.Mock).mockResolvedValue({
-            data:{user: {id: '1'}}
-        });
-
-        //simulacion de respuesta de la bd
-        mockMaybeSingle.mockResolvedValue({
-            data: {id: '1', fullname: 'Nicole', email: 'nicole@gmail.com'},
-            error:null
-        });
-
-        await getUsuario();
-
-        //verificacion de los nombres de las columnas
-        expect(mockSelect).toHaveBeenCalledWith(
-            'id, fullname, username, email, phone, gener, relation_pacien, fecha_nacimiento,address'
-        );
-        expect(mockEq).toHaveBeenCalledWith('id', '1');
+    // Simulamos la respuesta final en maybeSingle directamente sobre nuestro mockQueryBuilder
+    mockQueryBuilder.maybeSingle.mockResolvedValue({
+      data: { id: 'test-uuid-123', fullname: 'Andrea', email: 'andrea@gmail.com' },
+      error: null
     });
 
-    it('lanzar error si no hay sesion activa', async() => {
-        (supabase.auth.getUser as jest.Mock).mockResolvedValue({
-            data:{user: null}
-        });
-        await expect(getUsuario(1)).rejects.toThrow('No hay sesión activa');
+    await getUsuario(1);
+
+    // Validamos que se hayan llamado las funciones correctas
+    expect(supabase.from).toHaveBeenCalledWith('usuarios');
+    expect(mockQueryBuilder.select).toHaveBeenCalledWith(
+      'id, fullname, username, email, phone, gender, relation_pacien, fecha_nacimiento, address, token_not'
+    );
+    expect(mockQueryBuilder.eq).toHaveBeenCalledWith('id', 'test-uuid-123');
+  });
+
+  it('lanzar error si no hay sesion activa', async () => {
+    (supabase.auth.getUser as jest.Mock).mockResolvedValue({
+      data: { user: null }
     });
-})
+
+    await expect(getUsuario(1)).rejects.toThrow('No hay una sesión de usuario activa');
+  });
+});

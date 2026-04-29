@@ -16,8 +16,8 @@ describe('traducirError', () => {
 
     //validacion de intento de logueo varias veces
     it('traduce el error de limite de correos', () => {
-        const error = 'email limite exceeded';
-        expect(traducirError(error)).toBe('Has intentado iniciar sesión demasiadas veces. Por favor, espera un momento e inténtalo de nuevo.');
+        const error = 'email rate limit exceeded';
+        expect(traducirError(error)).toBe('Demasiados intentos. Por favor, espera un momento y vuelve a intentar.');
     })
 
     it('retorna mensajes si el error no es reconocido', () => {
