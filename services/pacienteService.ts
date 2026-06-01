@@ -54,8 +54,8 @@ async function registrarPaciente_SQLite(paciente: Partial<Infante>, usuarioId: s
     const newId = Math.random().toString(36).substring(2, 15);
     
     await db.runAsync(
-        `INSERT INTO paciente_inf (id, usuario_id, codigo_vinculacion, nombre, edad, genero, peso, estatura, nomtuto, problemas_salud)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO paciente_inf (id, usuario_id, codigo_vinculacion, nombre, edad, genero, peso, estatura, nomtuto, problemas_salud, nivel_mejora)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             newId, 
             usuarioId, 
@@ -66,7 +66,8 @@ async function registrarPaciente_SQLite(paciente: Partial<Infante>, usuarioId: s
             paciente.peso ?? 0, 
             paciente.estatura ?? 0, 
             paciente.nomtuto ?? '', 
-            paciente.problemas_salud ?? ''
+            paciente.problemas_salud ?? '',
+            paciente.nivel_mejora ?? 'basico' // valor por defecto para nivel_mejora
         ]
     );
     return true;
@@ -77,8 +78,8 @@ async function vincularPaciente_SQLite(datos: {nombre: string, nacimiento: strin
     const newId = Math.random().toString(36).substring(2, 15);
     
     await db.runAsync(
-        `INSERT INTO paciente_inf (id, usuario_id, codigo_vinculacion, nombre, edad, genero, peso, estatura, nomtuto, problemas_salud)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO paciente_inf (id, usuario_id, codigo_vinculacion, nombre, edad, genero, peso, estatura, nomtuto, problemas_salud, nivel_mejora)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             newId, 
             usuarioId, 
@@ -89,12 +90,19 @@ async function vincularPaciente_SQLite(datos: {nombre: string, nacimiento: strin
             0,  // peso por defecto
             0,  // estatura por defecto
             '', // nomtuto por defecto
-            'Vinculado por código' // problemas_salud por defecto
+            'Vinculado por código', // problemas_salud por defecto
+            'basico' // nivel_mejora por defecto
         ]
     );
     return true;
 }
-
+export async function actualizarNivelMejora(usuarioId: string, nuevoNivel: string) {
+    await db.runAsync(
+        `UPDATE paciente_inf SET nivel_mejora = ? WHERE usuario_id = ?`,
+        [nuevoNivel, usuarioId]
+    );
+    return true;
+} 
 // ==========================================
 // 3. EXPORTACIONES
 // ==========================================

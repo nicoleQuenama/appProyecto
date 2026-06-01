@@ -32,7 +32,8 @@ export async function initDatabase() {
         peso REAL,
         estatura REAL,
         nomtuto TEXT,
-        problemas_salud TEXT
+        problemas_salud TEXT,
+        nivel_mejora TEXT -- para recomendaciones de ejercicios
       );
 
       -- Tabla de Citas
@@ -57,10 +58,24 @@ export async function initDatabase() {
         lecturas TEXT,
         created_at TEXT
       );
+      -- Tabla de Ejercicios
+      CREATE TABLE IF NOT EXISTS ejercicios (
+        id TEXT PRIMARY KEY,
+        titulo TEXT,
+        descripcion TEXT,
+        nivel_dificultad TEXT,
+        video_url TEXT,
+        archivo_local TEXT,
+        is_active INTEGER DEFAULT 1
+      );
     `);
 
-  
-  
+  try {
+    await db.execAsync('ALTER TABLE paciente ADD COLUMN nivel_mejora TEXT DEFAULT "basico";');
+  } catch (e) {
+    // Si el error es porque la columna ya existe, lo ignoramos.
+    console.log("Columna nivel_mejora ya existe o no se pudo agregar.");
+  }
     console.log("Base de datos SQLite inicializada correctamente");
   } catch (error) {
     console.error("Error al inicializar la base de datos:", error);

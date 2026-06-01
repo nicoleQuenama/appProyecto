@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { Platform, StyleSheet } from 'react-native'
-
 import { Colors } from '../../constants/colors'
 
 export default function TabsLayout() {
@@ -55,6 +54,18 @@ export default function TabsLayout() {
               color={color} 
             />
           )
+        }} 
+      />
+
+      {/* EL TRUCO DE LA PESTAÑA OCULTA:
+        Al poner href: null, Expo Router sabe que esta ruta pertenece a los Tabs
+        (por lo que el menú inferior no desaparece), pero NO dibuja un 4to ícono.
+      */}
+      <Tabs.Screen 
+        name="recomendaciones" 
+        options={{ 
+          href: null, // Esto es lo que lo oculta de la barra visual
+          headerShown: false 
         }} 
       />
     </Tabs>

@@ -156,14 +156,14 @@ export default function HomeScreen() {
 
             {/* PLAN DE TRATAMIENTO (Formato Bento Grid) */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Plan de Tratamiento</Text>
+              <Text style={styles.sectionTitle}>Plan de Tratamiento en Casa</Text>
               
               <View style={styles.bentoGrid}>
                 {/* Bento Izquierdo: Ejercicios */}
                 <TouchableOpacity 
                   style={[styles.bentoCard, styles.bentoLight]}
                   activeOpacity={0.8}
-                  onPress={() => router.push('/patient/ejercicios')}
+                  onPress={() => router.push('/tabs/recomendaciones/ejercicio')}
                 >
                   <View style={styles.bentoIconWrapperLight}>
                     <Text style={styles.bentoIconDark}>+</Text>

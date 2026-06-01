@@ -9,4 +9,5 @@ export type Infante = {
     estatura: number
     nomtuto: string
     problemas_salud: string
+    nivel_mejora: string
 }
