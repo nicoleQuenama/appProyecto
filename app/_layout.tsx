@@ -1,25 +1,37 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { AuthProvider, useAuth } from '../context/AuthContext'
+import { initDatabase } from '../lib/database' //Importamos la BD
 
 function RootLayoutNav() {
   const { session, loading } = useAuth()
   const router = useRouter()
   const segments = useSegments()
+  
+  // Estado para saber si SQLite está listo
+  const [dbReady, setDbReady] = useState(false) 
+
+  // Inicializamos las tablas al abrir la app
+  useEffect(() => {
+    async function setupDb() {
+      await initDatabase()
+      setDbReady(true)
+    }
+    setupDb()
+  }, [])
 
   useEffect(() => {
-    if (loading) return
+    //Ahora también esperamos a que dbReady sea true
+    if (loading || !dbReady) return 
 
     const inAuthGroup = segments[0] === 'autentificacion'
 
     if (!session && !inAuthGroup) {
-      // Sin sesión → login
       router.replace('/autentificacion/login')
     } else if (session && inAuthGroup) {
-      // Con sesión → home
       router.replace('/tabs/home')
     }
-  }, [session, loading])
+  }, [session, loading, dbReady, segments])
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
