@@ -93,6 +93,7 @@ export default function LoginScreen() {
               onChangeText={(v) => setForm({...form, emailOrUsername: v})}
               error={errors.emailOrUsername}
               editable={!isSubmitting}
+              testID="input-email" //
             />
 
             <Input 
@@ -103,6 +104,7 @@ export default function LoginScreen() {
               onChangeText={(v) => setForm({...form, password: v})}
               error={errors.password}
               editable={!isSubmitting}
+              testID="input-password"
             />
 
             <TouchableOpacity style={styles.forgotPasswordBtn}>
@@ -114,6 +116,7 @@ export default function LoginScreen() {
               onPress={handleLogin}
               isLoading={isSubmitting}
               style={styles.loginBtn}
+              testID="btn-login"
             />
           </View>
 

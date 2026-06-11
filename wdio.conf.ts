@@ -24,6 +24,7 @@ export const config: WebdriverIO.Config = {
     // of the config file unless it's absolute.
     //
     specs: [
+        './test/specs/**/*.ts' // ToDo: define location for spec files here
         // ToDo: define location for spec files here
     ],
     // Patterns to exclude.
@@ -131,7 +132,11 @@ export const config: WebdriverIO.Config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec'],
+    reporters: ['spec', ['allure', {
+        outputDir: 'allure-results', // Aquí guardará los datos crudos
+        disableWebdriverStepsReporting: true,
+        disableWebdriverScreenshotsReporting: false, // ¡Para ver pantallazos si algo falla!
+    }]],
 
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
