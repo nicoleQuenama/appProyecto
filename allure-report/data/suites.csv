@@ -1,2 +1,6 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","12547","Debe escribir el correo, contraseña y presionar el botón","Flujo de Login de Equilibra","2026-06-17","passed","2026-06-17","","","",""
+"","25247","Debe navegar al registro, llenar todos los datos y presionar el botón","Flujo de Registro de Equilibra","2026-06-17","passed","2026-06-17","","","",""
+"","31563","Debe registrar usuario, vincular paciente y solicitar una cita","Flujo de Crear Cita de Equilibra","2026-06-17","broken","2026-06-17","","","",""
+"","10606","Debe escribir el correo, contraseña y presionar el botón","Flujo de Login de Equilibra","2026-06-17","passed","2026-06-17","","","",""
+"","22633","Debe navegar al registro, llenar datos y presionar el botón","Flujo de Registro de Equilibra","2026-06-17","broken","2026-06-17","","","",""
+"","23028","Debe iniciar sesión, navegar a crear cita y solicitar una cita","Flujo de Crear Cita de Equilibra","2026-06-17","broken","2026-06-17","","","",""
