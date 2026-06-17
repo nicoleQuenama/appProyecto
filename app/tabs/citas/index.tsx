@@ -121,7 +121,9 @@ export default function CitasIndexScreen() {
             <Text style={styles.emptySubtitle}>Para agendar y ver citas, primero debes vincular el expediente de un paciente.</Text>
             <Button 
               title="Vincular expediente" 
-              onPress={() => router.push('/patient/vincularPaciente')} 
+              onPress={() => router.push('/patient/vincularPaciente')}
+              testID="btn-vincular-expediente"
+              accessibilityLabel="btn-vincular-expediente"
             />
           </Card>
         ) : (
@@ -216,6 +218,8 @@ export default function CitasIndexScreen() {
             title="Agendar nueva cita" 
             onPress={() => router.push('/tabs/citas/crearCita')} 
             style={styles.addBtn}
+            testID="btn-agendar-nueva-cita"
+            accessibilityLabel="btn-agendar-nueva-cita"
           />
         </View>
       )}

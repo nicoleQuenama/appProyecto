@@ -136,6 +136,8 @@ export default function RegisterScreen() {
               onChangeText={(v) => setForm({...form, fullName: v})}
               error={errors.fullName}
               editable={!isSubmitting}
+              testID="input-fullName"
+              accessibilityLabel="input-fullName"
             />
 
             <Input 
@@ -147,6 +149,8 @@ export default function RegisterScreen() {
               onChangeText={(v) => setForm({...form, username: v})}
               error={errors.username}
               editable={!isSubmitting}
+              testID="input-username"
+              accessibilityLabel="input-username"
             />
 
             <Input 
@@ -159,6 +163,8 @@ export default function RegisterScreen() {
               onChangeText={(v) => setForm({...form, email: v})}
               error={errors.email}
               editable={!isSubmitting}
+              testID="input-email"
+              accessibilityLabel="input-email"
             />
 
             <Input 
@@ -169,6 +175,8 @@ export default function RegisterScreen() {
               onChangeText={(v) => setForm({...form, password: v})}
               error={errors.password}
               editable={!isSubmitting}
+              testID="input-password"
+              accessibilityLabel="input-password"
             />
             
             <View style={styles.phoneRow}>
@@ -180,6 +188,8 @@ export default function RegisterScreen() {
                   onChangeText={(v) => setForm({...form, phoneCode: v})}
                   editable={!isSubmitting}
                   keyboardType="phone-pad"
+                  testID="input-phoneCode"
+                  accessibilityLabel="input-phoneCode"
                 />
               </View>
               <View style={styles.phoneNumberContainer}>
@@ -190,12 +200,14 @@ export default function RegisterScreen() {
                   value={form.phoneNumber}
                   onChangeText={(v) => setForm({...form, phoneNumber: v})}
                   editable={!isSubmitting}
+                  testID="input-phoneNumber"
+                  accessibilityLabel="input-phoneNumber"
                 />
               </View>
             </View>
 
             <View pointerEvents="box-only">
-              <TouchableOpacity activeOpacity={0.7} onPress={() => !isSubmitting && setShowDatePicker(true)}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => !isSubmitting && setShowDatePicker(true)} testID="input-fechaNacimiento" accessibilityLabel="input-fechaNacimiento">
                 <Input 
                   label="Fecha de Nacimiento"
                   placeholder="Selecciona una fecha"
@@ -220,6 +232,8 @@ export default function RegisterScreen() {
               <TouchableOpacity 
                 activeOpacity={0.8} 
                 onPress={() => !isSubmitting && setShowGenderDropdown(!showGenderDropdown)}
+                testID="input-gender"
+                accessibilityLabel="input-gender"
               >
                 <View pointerEvents="none">
                   <Input 
@@ -254,6 +268,7 @@ export default function RegisterScreen() {
                           setForm({...form, gender: option});
                           setShowGenderDropdown(false);
                         }}
+                        accessibilityLabel={`opt-gender-${option}`}
                       >
                         <Text style={[
                           styles.dropdownItemText,
@@ -277,6 +292,8 @@ export default function RegisterScreen() {
               value={form.relation_pacien}
               onChangeText={(v) => setForm({...form, relation_pacien: v})}
               editable={!isSubmitting}
+              testID="input-relation"
+              accessibilityLabel="input-relation"
             />
 
             <Input 
@@ -285,6 +302,8 @@ export default function RegisterScreen() {
               value={form.address}
               onChangeText={(v) => setForm({...form, address: v})}
               editable={!isSubmitting}
+              testID="input-address"
+              accessibilityLabel="input-address"
             />
 
             <Button 
@@ -292,6 +311,8 @@ export default function RegisterScreen() {
               onPress={handleRegister}
               isLoading={isSubmitting}
               style={styles.registerBtn}
+              testID="btn-register"
+              accessibilityLabel="btn-register"
             />
           </View>
 

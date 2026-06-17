@@ -119,6 +119,8 @@ export default function VincularPacienteScreen() {
             value={form.codigoVinculacion}
             onChangeText={(v) => setForm({...form, codigoVinculacion: v})}
             autoCapitalize="characters"
+            testID="input-codigo-vinculacion"
+            accessibilityLabel="input-codigo-vinculacion"
           />
 
           <Input 
@@ -127,11 +129,13 @@ export default function VincularPacienteScreen() {
             value={form.nombre}
             onChangeText={(v) => setForm({...form, nombre: v})}
             autoCapitalize="words"
+            testID="input-nombre-paciente"
+            accessibilityLabel="input-nombre-paciente"
           />
 
           {/* DESPLEGABLE: GÉNERO */}
           <View style={styles.dropdownWrapper}>
-            <TouchableOpacity activeOpacity={0.8} onPress={() => toggleDropdown('genero')}>
+            <TouchableOpacity activeOpacity={0.8} onPress={() => toggleDropdown('genero')} testID="input-genero-paciente" accessibilityLabel="input-genero-paciente">
               <View pointerEvents="none">
                 <Input 
                   label="Género"
@@ -156,6 +160,7 @@ export default function VincularPacienteScreen() {
                       setForm({...form, genero: gen})
                       setActiveDropdown(null)
                     }}
+                    accessibilityLabel={`opt-genero-${gen}`}
                   >
                     <Text style={[styles.dropdownItemText, form.genero === gen && styles.dropdownItemTextSelected]}>{gen}</Text>
                   </TouchableOpacity>
@@ -165,7 +170,7 @@ export default function VincularPacienteScreen() {
           </View>
 
           {/* SELECTOR DE FECHA DE NACIMIENTO */}
-          <TouchableOpacity activeOpacity={0.7} onPress={() => setShowDatePicker(true)} style={{marginTop: 4}}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => setShowDatePicker(true)} style={{marginTop: 4}} testID="input-fecha-paciente" accessibilityLabel="input-fecha-paciente">
             <View pointerEvents="none">
               <Input 
                 label="Fecha de Nacimiento"
@@ -191,6 +196,8 @@ export default function VincularPacienteScreen() {
             onPress={handleVincular}
             isLoading={isSubmitting}
             style={styles.submitBtn}
+            testID="btn-vincular-expediente"
+            accessibilityLabel="btn-vincular-expediente"
           />
 
         </View>

@@ -22,7 +22,7 @@ export const config: WebdriverIO.Config | any = {
     // ============
     // Capabilities
     // ============
-    maxInstances: 10,
+    maxInstances: 1,
     //
     capabilities: [{
         platformName: 'Android',

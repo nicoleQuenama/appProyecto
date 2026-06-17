@@ -151,7 +151,7 @@ export default function CrearCitaScreen() {
 
           {/* DESPLEGABLE: ESPECIALIDAD */}
           <View style={styles.dropdownWrapper}>
-            <TouchableOpacity activeOpacity={0.8} onPress={() => toggleDropdown('especialidad')}>
+            <TouchableOpacity activeOpacity={0.8} onPress={() => toggleDropdown('especialidad')} testID="input-especialidad" accessibilityLabel="input-especialidad">
               <View pointerEvents="none">
                 <Input 
                   label="Especialidad"
@@ -176,6 +176,7 @@ export default function CrearCitaScreen() {
                       setEspecialidad(esp)
                       setActiveDropdown(null)
                     }}
+                    accessibilityLabel={`opt-especialidad-${esp}`}
                   >
                     <Text style={[styles.dropdownItemText, especialidad === esp && styles.dropdownItemTextSelected]}>{esp}</Text>
                   </TouchableOpacity>
@@ -186,7 +187,7 @@ export default function CrearCitaScreen() {
 
           {/* DESPLEGABLE: ESPECIALISTA */}
           <View style={styles.dropdownWrapper}>
-            <TouchableOpacity activeOpacity={0.8} onPress={() => toggleDropdown('especialista')}>
+            <TouchableOpacity activeOpacity={0.8} onPress={() => toggleDropdown('especialista')} testID="input-especialista" accessibilityLabel="input-especialista">
               <View pointerEvents="none">
                 <Input 
                   label="Médico Especialista"
@@ -211,6 +212,7 @@ export default function CrearCitaScreen() {
                       setEspecialista(medico)
                       setActiveDropdown(null)
                     }}
+                    accessibilityLabel={`opt-especialista-${medico}`}
                   >
                     <Text style={[styles.dropdownItemText, especialista === medico && styles.dropdownItemTextSelected]}>{medico}</Text>
                   </TouchableOpacity>
@@ -224,7 +226,7 @@ export default function CrearCitaScreen() {
           {/* FECHA Y HORA (En una fila) */}
           <View style={styles.row}>
             <View style={styles.halfWidth}>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => setShowDatePicker(true)}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => setShowDatePicker(true)} testID="input-fecha" accessibilityLabel="input-fecha">
                 <View pointerEvents="none">
                   <Input 
                     label="Fecha"
@@ -237,7 +239,7 @@ export default function CrearCitaScreen() {
             </View>
 
             <View style={styles.halfWidth}>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => setShowTimePicker(true)}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => setShowTimePicker(true)} testID="input-hora" accessibilityLabel="input-hora">
                 <View pointerEvents="none">
                   <Input 
                     label="Hora"
@@ -274,6 +276,8 @@ export default function CrearCitaScreen() {
             label="Lugar de la consulta"
             value={lugar}
             onChangeText={setLugar}
+            testID="input-lugar"
+            accessibilityLabel="input-lugar"
           />
 
           {error && (
@@ -287,6 +291,8 @@ export default function CrearCitaScreen() {
             onPress={handleGuardar}
             isLoading={isSubmitting}
             style={styles.submitBtn}
+            testID="btn-solicitar-cita"
+            accessibilityLabel="btn-solicitar-cita"
           />
 
         </View>

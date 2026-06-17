@@ -39,7 +39,8 @@ export default function TabsLayout() {
               size={24} 
               color={color} 
             />
-          )
+          ),
+          tabBarAccessibilityLabel: 'tab-agenda',
         }} 
       />
       

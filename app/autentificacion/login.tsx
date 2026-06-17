@@ -125,7 +125,7 @@ export default function LoginScreen() {
 
           <View style={styles.footerContainer}>
             <Text style={styles.footerText}>¿No tienes una cuenta?</Text>
-            <TouchableOpacity onPress={() => router.push('/autentificacion/register')}>
+            <TouchableOpacity onPress={() => router.push('/autentificacion/register')} testID="link-register" accessibilityLabel="link-register">
               <Text style={styles.registerText}>Regístrate aquí</Text>
             </TouchableOpacity>
           </View>
