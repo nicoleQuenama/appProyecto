@@ -94,6 +94,7 @@ export default function LoginScreen() {
               error={errors.emailOrUsername}
               editable={!isSubmitting}
               testID="input-email" //
+              accessibilityLabel={"input-email"}
             />
 
             <Input 
@@ -105,6 +106,7 @@ export default function LoginScreen() {
               error={errors.password}
               editable={!isSubmitting}
               testID="input-password"
+              accessibilityLabel={"input-password"}
             />
 
             <TouchableOpacity style={styles.forgotPasswordBtn}>
@@ -117,6 +119,7 @@ export default function LoginScreen() {
               isLoading={isSubmitting}
               style={styles.loginBtn}
               testID="btn-login"
+              accessibilityLabel= "btn-login"
             />
           </View>
 

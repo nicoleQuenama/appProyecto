@@ -4,8 +4,8 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test:service": "jest",
     "test:e2e": "wdio run wdio.conf.ts",
@@ -34,6 +34,8 @@
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^14.0.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
     "@types/react": "~19.1.10",
     "@wdio/allure-reporter": "^9.28.0",
@@ -47,7 +49,9 @@
     "appium": "^3.5.0",
     "appium-uiautomator2-driver": "^7.5.2",
     "expect-webdriverio": "^5.6.7",
+    "jest": "^30.4.2",
     "jest-html-reporters": "^3.1.7",
+    "ts-jest": "^29.4.11",
     "typescript": "~5.9.2"
   },
   "private": true
