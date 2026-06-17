@@ -1,0 +1,1 @@
+[{"name":"Jenkins","type":"jenkins","url":"http://localhost:8081/","buildOrder":6,"buildName":"equilibra-app #6","buildUrl":"http://localhost:8081/job/equilibra-app/6/display/redirect","reportName":"AllureReport","reportUrl":"http://localhost:8081/job/equilibra-app/6/allure"}]
