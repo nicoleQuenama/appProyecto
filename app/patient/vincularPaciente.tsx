@@ -16,7 +16,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 
 import { useAuth } from '../../context/AuthContext'
 import { Colors } from '../../constants/colors'
-// import { vincularPaciente } from '../../services/pacienteService' // <-- Para conectar a tu BD
+import { vincularPaciente } from '../../services/pacienteService'
 
 import Input from '../../components/input'
 import Button from '../../components/button'
@@ -55,20 +55,16 @@ export default function VincularPacienteScreen() {
 
     try {
       setIsSubmitting(true)
-      
-      // Aquí iría tu lógica de conexión a la base de datos
-      /*
-      await vincularPaciente({
-        codigo_vinculacion: form.codigoVinculacion,
-        nombre: form.nombre,
-        genero: form.genero,
-        fecha_nac: form.fechaNacimiento.toISOString().split('T')[0],
-        tutor_id: user?.id
-      })
-      */
 
-      // Simulamos un pequeño retraso de red
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await vincularPaciente(
+        {
+          nombre: form.nombre,
+          nacimiento: form.fechaNacimiento.toISOString().split('T')[0],
+          codigo: form.codigoVinculacion,
+          genero: form.genero,
+        },
+        user?.id ?? ''
+      )
 
       Alert.alert(
         "¡Expediente Vinculado!", 

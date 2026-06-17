@@ -1,13 +1,17 @@
-import { traducirError } from "../authService";
-
-// prueba unitaria para la función traducirError
-
+jest.mock('react-native-url-polyfill/auto', () => {});
+jest.mock('@react-native-async-storage/async-storage', () => ({}));
+//mockeo of the db
 jest.mock('../../lib/supabase', ()=> ({
     supabase: {
         auth: jest.fn(),
     }
 }));
+jest.mock('../../lib/database', () => ({
+    db: {} 
+}));
+import { traducirError } from "../authService";
 
+// prueba unitaria para la función traducirError
 describe('traducirError', () => {
     it('devuelve mensajes entendibles para las credenciales de los usuarios', () =>{
         const error= 'Invalid login credentials';

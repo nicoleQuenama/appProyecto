@@ -5,7 +5,7 @@ describe('Flujo de Login de Equilibra', () => {
         // 1. Encontrar el campo de email (Appium usa el prefijo ~ para los testID)
         const inputEmail = await $('~input-email');
         await inputEmail.waitForDisplayed({ timeout: 10000 }); // Espera hasta 10 seg a que cargue la app
-        await inputEmail.setValue('test@mail.com'); // El robot escribe esto
+        await inputEmail.setValue('test@gmail.com'); // El robot escribe esto
 
         // 2. Encontrar el campo de contraseña
         const inputPassword = await $('~input-password');

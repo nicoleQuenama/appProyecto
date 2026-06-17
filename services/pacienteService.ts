@@ -74,8 +74,9 @@ async function registrarPaciente_SQLite(paciente: Partial<Infante>, usuarioId: s
 }
 
 // Nueva función para el formulario de vinculación llenando campos obligatorios
-async function vincularPaciente_SQLite(datos: {nombre: string, nacimiento: string, codigo: string}, usuarioId: string) {
+async function vincularPaciente_SQLite(datos: {nombre: string, nacimiento: string, codigo: string, genero?: string}, usuarioId: string) {
     const newId = Math.random().toString(36).substring(2, 15);
+    const edad = datos.nacimiento ? calcularEdad(datos.nacimiento) : 0;
     
     await db.runAsync(
         `INSERT INTO paciente_inf (id, usuario_id, codigo_vinculacion, nombre, edad, genero, peso, estatura, nomtuto, problemas_salud, nivel_mejora)
@@ -85,16 +86,27 @@ async function vincularPaciente_SQLite(datos: {nombre: string, nacimiento: strin
             usuarioId, 
             datos.codigo, 
             datos.nombre, 
-            0, // edad por defecto
-            '', // genero por defecto
-            0,  // peso por defecto
-            0,  // estatura por defecto
-            '', // nomtuto por defecto
-            'Vinculado por código', // problemas_salud por defecto
-            'basico' // nivel_mejora por defecto
+            edad,
+            datos.genero ?? '',
+            0,
+            0,
+            '',
+            'Vinculado por código',
+            'basico'
         ]
     );
     return true;
+}
+
+function calcularEdad(fechaNacimiento: string): number {
+    const hoy = new Date()
+    const nacimiento = new Date(fechaNacimiento)
+    let edad = hoy.getFullYear() - nacimiento.getFullYear()
+    const mes = hoy.getMonth() - nacimiento.getMonth()
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+        edad--
+    }
+    return edad
 }
 export async function actualizarNivelMejora(usuarioId: string, nuevoNivel: string) {
     await db.runAsync(

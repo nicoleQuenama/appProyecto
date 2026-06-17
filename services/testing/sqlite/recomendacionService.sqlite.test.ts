@@ -35,11 +35,13 @@ describe('ejerciciosService (SQLite)', () =>{
         expect(resultado).toEqual(mockRutina);
     });
     it('debe manejar errores de base de datos retornando un array vacío', async () => {
-    (db.getAllAsync as jest.Mock).mockRejectedValue(new Error('DB Locked'));
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        (db.getAllAsync as jest.Mock).mockRejectedValue(new Error('DB Locked'));
 
     const resultado = await obtenerEjercicioSegunDificultad('basico');
     
     // La aplicación no debe romperse, debe devolver un array vacío según tu manejo de errores
     expect(resultado).toEqual([]); 
+    consoleSpy.mockRestore();
   });
 });

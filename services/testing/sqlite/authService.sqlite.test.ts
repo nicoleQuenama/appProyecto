@@ -9,12 +9,6 @@ jest.mock('../../../lib/supabase', () => ({
   supabase: { auth: jest.fn(), from: jest.fn() }
 }));
 
-jest.mock('../../../lib/database', () => ({
-  db: {
-    runAsync: jest.fn(),
-    getFirstAsync: jest.fn()
-  }
-}));
 //simulacion de  la bd (mock)
 jest.mock('../../../lib/database', () => ({
     db :{
@@ -68,7 +62,7 @@ describe('Logueo de Usuario',() => {
 
         //variable de prueba
     const form: LoginForm = {
-        emailOrUsername: 'testi@gmail.com',
+        emailOrUsername: 'test@gmail.com', //modificar para probar que de 
         password: 'abcdefg8'
     };
     await loginUser(form);
